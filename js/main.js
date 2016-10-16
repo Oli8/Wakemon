@@ -25,7 +25,6 @@ var pokeInfo = {
         evolutions: {value: [], loaded: false},
         description: {value: '', loaded: false},
         error: false,
-        msg: 'lol',
         pokeId: '',
         loaded: false
 };
@@ -61,7 +60,6 @@ var pokemonView  = Vue.extend({
                     pokeInfo.description.loaded = true;
                     pokeInfo.description.value = r.flavor_text_entries[1].flavor_text;
                     var evoUrl = r.evolution_chain.url;
-                    var url = '';
                     
                     this.$http.get(evoUrl).then(function(data2){
                         var d = data2.body;
