@@ -22,8 +22,8 @@ var pokeInfo = {
         abilities: [],
         attacks: [],
         stats: [],
-        evolutions: [],
-        description: '',
+        evolutions: {value: [], loaded: false},
+        description: {value: '', loaded: false},
         error: false,
         msg: 'lol',
         pokeId: '',
@@ -36,7 +36,6 @@ var pokemonView  = Vue.extend({
     },
     methods: {
         getPokeInfo: function(id) {
-            console.log('getting info');
             this.$http.get('http://pokeapi.co/api/v2/pokemon/'+id).then(function(data){
                 pokeInfo.loaded = true;
                 var b = data.body;
@@ -57,7 +56,8 @@ var pokemonView  = Vue.extend({
 
                 this.$http.get('http://pokeapi.co/api/v2/pokemon-species/'+pokeInfo.id+'/').then(function(response){
                     var r = response.body;
-                    pokeInfo.description = r.flavor_text_entries[1].flavor_text;
+                    pokeInfo.description.loaded = true;
+                    pokeInfo.description.value = r.flavor_text_entries[1].flavor_text;
                     var evoUrl = r.evolution_chain.url;
                     var url = '';
                     
@@ -65,18 +65,19 @@ var pokemonView  = Vue.extend({
                         var d = data2.body;
 
                         var pName = d.chain.species.name;
-                        pokeInfo.evolutions = [`<a href="index.html#!/pokemon/${pName}">${pName}</a>`];
+                        pokeInfo.evolutions.value = [`<a href="index.html#!/pokemon/${pName}">${pName}</a>`];
                         var obj = d.chain;
 
                         while(obj.evolves_to.length){
                             for(var v of obj.evolves_to) {
                                 var name = v.species.name;
-                                pokeInfo.evolutions.push(`<a href="index.html#!/pokemon/${name}">${name}</a>`);
+                                pokeInfo.evolutions.value.push(`<a href="index.html#!/pokemon/${name}">${name}</a>`);
                             }
                             obj = obj['evolves_to'][0];
                         }
 
-                        pokeInfo.evolutions = pokeInfo.evolutions.join(', ');
+                        pokeInfo.evolutions.loaded= true;
+                        pokeInfo.evolutions.value = pokeInfo.evolutions.value.join(', ');
                     });
                 }, function(response){
                     this.error = true;
@@ -94,10 +95,10 @@ var pokemonView  = Vue.extend({
         <div class="alert alert-danger" role="alert" v-show="error">
           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Nothing found
         </div>
-        <div class="loading"><img src="loading.GIF" v-show="!loaded && !error"/></div>
+        <div class="loading"><img src="loading.GIF" v-show="!loaded && !error" alt="loading"/></div>
         <div id="pokeInfo" v-show="loaded">
             <h2> {{ name | capitalize }} </h2>
-            <img src="{{sprite}}" alt="{{name}}"/>
+            <img src="{{sprite}}" alt="{{name}}" class="sprite"/>
             <span>Id :</span> {{ id }}<br/>
             <span>Weight:</span> {{ weight }}kg<br/>
             <span>Height:</span> {{ height }}m<br/>
@@ -105,8 +106,8 @@ var pokemonView  = Vue.extend({
             <span>Abilities:</span> {{ abilities }}<br/>
             <span>Attacks:</span> {{ attacks}}<br/> 
             <span>Stats:</span> {{ stats }}<br/>
-            <span>Description:</span> {{ description }}<br>
-            <span>Evolutions chain:</span> {{{ evolutions }}}
+            <span>Description:</span> <img src="smallloading.gif" alt="loading" v-show="!description.loaded"/>{{ description.value }}<br>
+            <span>Evolutions chain:</span> <img src="smallloading.gif" alt="loading" v-show="!evolutions.loaded"/>{{{ evolutions.value }}}
         </div>`,
     watch:{
         '$route.params.id': function(val, oldVal) {
