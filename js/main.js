@@ -52,7 +52,9 @@ var pokemonView  = Vue.extend({
 
                 pokeInfo.attacks = b.moves.map(v => v.move.name).join(', ');
 
-                pokeInfo.stats = b.stats.map(v => `${v.stat.name} : ${v.base_stat}`).join(', ');
+                pokeInfo.stats = b.stats.map(function(v){
+                    return {key: v.stat.name, value: v.base_stat}
+                });
 
                 this.$http.get('http://pokeapi.co/api/v2/pokemon-species/'+pokeInfo.id+'/').then(function(response){
                     var r = response.body;
@@ -105,7 +107,10 @@ var pokemonView  = Vue.extend({
             <span>Types:</span> {{ types }}<br/>
             <span>Abilities:</span> {{ abilities }}<br/>
             <span>Attacks:</span> {{ attacks}}<br/> 
-            <span>Stats:</span> {{ stats }}<br/>
+            <span>Stats:</span><br/>
+            <ul>
+                <li v-for="s in stats"><span>{{ s.key | capitalize}}</span> : {{ s.value }}</li>
+            </ul>
             <span>Description:</span> <img src="smallloading.gif" alt="loading" v-show="!description.loaded"/>{{ description.value }}<br>
             <span>Evolutions chain:</span> <img src="smallloading.gif" alt="loading" v-show="!evolutions.loaded"/>{{{ evolutions.value }}}
         </div>`,
@@ -113,8 +118,8 @@ var pokemonView  = Vue.extend({
         '$route.params.id': function(val, oldVal) {
             pokeInfo.loaded = false
             pokeInfo.error = false;
-            pokeInfo.description = '';
-            pokeInfo.evolutions = [];
+            pokeInfo.description = {value: '', loaded: false};
+            pokeInfo.evolutions = {value: '', loaded: false};
             this.getPokeInfo(this.$route.params.id);
         }
     }
