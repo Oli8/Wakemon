@@ -35,21 +35,28 @@
 	</nav>
 
 	<div class="container main">
-		Name : {{ name | capitalize }}<br/>
+		<input type="search" class="form-control" placeholder="Pokemon name or id">
+
+
+		<my></my>
+		<!-- Name : {{ name | capitalize }}<br/>
 		Id : {{ id }}<br/>
 		Weight: {{ weight }}<br/>
 		Height: {{ height }}<br/>
 		Image: {{ sprite }}<br/>
 		Types: {{ types.join(', ') }}<br/>
-		Abilities: {{ abilities.join(' ') }}<br/>
+		Abilities: {{ abilities.join(', ') }}<br/>
 		Attacks: {{ attacks.join(', ')}}<br/> 
-		{{ stats }}<br/>
-		{{ description }}<br>
+		Stats: {{ stats.join(', ') }}<br/>
+		Description: {{ description }}<br>
+		Evolution: {{ evolutions }} -->
+
+		<router-view></router-view>
 	</div>
 
 	<script type="text/javascript" src="js/vue.js"></script>
 	<script type="text/javascript" src="js/vue-resource.min.js"></script>
-	<script type="text/javascript" src="js/vue-animated-list.js"></script>
+	<script type="text/javascript" src="js/vue-router.min.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>

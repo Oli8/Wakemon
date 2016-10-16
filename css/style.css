@@ -1,7 +1,4 @@
-.main{
-	text-align: center;
-	margin-top: 100px;
-}
+.main{text-align: center;}
 table{text-align: left;}
 td{vertical-align: middle !important;}
 footer a:hover{color: black !important;}
