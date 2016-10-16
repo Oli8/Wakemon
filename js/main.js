@@ -1,6 +1,25 @@
 var main = new Vue({
     el: '.main',
     data: {
+        pokeId: ''
+    },
+    methods: {
+        handleForm: function(){
+            console.log('submited');
+            router.go(`/pokemon/${this.pokeId}`);
+        },
+    },
+    ready: function(){
+        console.log('ready');
+    }
+});
+
+console.log(main.$children[0]);
+// console.log(main._data);
+
+var App = Vue.extend({});
+
+var pokeInfo = {
         name: '',
         id: '',
         sprite: '',
@@ -13,29 +32,39 @@ var main = new Vue({
         evolutions: [],
         description: '',
         error: false,
-        msg: 'lol'
-    },
+        msg: 'lol',
+        pokeId: ''
+};
+
+var pokemonView  = Vue.extend({
     ready: function(){
-        this.$http.get('http://pokeapi.co/api/v2/pokemon/croagunk').then(function(data){
+        console.log('poke ready');
+        console.log(this.$route.params.id);
+        this.getPokeInfo(this.$route.params.id);
+    },
+    methods: {
+        getPokeInfo: function(id) {
+            console.log('getting info');
+            this.$http.get('http://pokeapi.co/api/v2/pokemon/'+id).then(function(data){
             var b = data.body;
             //console.log(b);
-            this.name = b.name;
-            this.id = b.id;
-            this.sprite =  b.sprites.front_default;
-            this.weight = b.weight / 10;
-            this.height = b.height / 10;
+            pokeInfo.name = b.name;
+            pokeInfo.id = b.id;
+            pokeInfo.sprite =  b.sprites.front_default;
+            pokeInfo.weight = b.weight / 10;
+            pokeInfo.height = b.height / 10;
 
-            this.types = b.types.map(v => v.type.name);
+            pokeInfo.types = b.types.map(v => v.type.name);
 
-            this.abilities = b.abilities.map(v => v.ability.name);
+            pokeInfo.abilities = b.abilities.map(v => v.ability.name);
 
-            this.attacks = b.moves.map(v => v.move.name);
+            pokeInfo.attacks = b.moves.map(v => v.move.name);
 
-            this.stats = b.stats.map(v => `${v.stat.name} : ${v.base_stat}`);
+            pokeInfo.stats = b.stats.map(v => `${v.stat.name} : ${v.base_stat}`);
 
-            this.$http.get('http://pokeapi.co/api/v2/pokemon-species/'+this.id+'/').then(function(response){
+            this.$http.get('http://pokeapi.co/api/v2/pokemon-species/'+pokeInfo.id+'/').then(function(response){
                 var r = response.body;
-                this.description = r.flavor_text_entries[1].flavor_text;
+                pokeInfo.description = r.flavor_text_entries[1].flavor_text;
                 var evoUrl = r.evolution_chain.url;
                 console.log(evoUrl); 
                 // this.$http.get(evoUrl).then(function(evo){
@@ -46,29 +75,14 @@ var main = new Vue({
                 this.error = true;
             });
 
-        }, function(data){
-            console.log('error ', data);
-            this.error = true;
-        });
+            }, function(data){
+                console.log('error ', data);
+                this.error = true;
+            });
+        },
     },
-    components: {
-        my: {
-            data: function(){
-                return this.$parent.$data;
-            },
-            template: "<h1>{{ msg }} oo</h1>"
-        }
-    }
-});
-
-console.log(main);
-// console.log(main._data);
-
-var App = Vue.extend({});
-
-var pokemonView  = Vue.extend({
     data: function(){
-        return this.$root.data
+        return pokeInfo
     },
     template: `Name : {{ name | capitalize }}<br/>
         Id : {{ id }}<br/>
@@ -79,14 +93,18 @@ var pokemonView  = Vue.extend({
         Abilities: {{ abilities.join(', ') }}<br/>
         Attacks: {{ attacks.join(', ')}}<br/> 
         Stats: {{ stats.join(', ') }}<br/>
-        Description: {{ description }}<br>
-        Evolution: {{ evolutions }}`
+        Description: {{ description }}<br>`,
+    watch:{
+        '$route.params.id': function(val, oldVal) {
+            this.getPokeInfo(this.$route.params.id);
+        }
+    }
 });
 
 var router = new VueRouter();
 
 router.map({
-    '/pokemon': {
+    '/pokemon/:id': {
         component: pokemonView
     }
 });

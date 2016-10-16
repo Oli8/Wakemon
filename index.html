@@ -35,21 +35,9 @@
 	</nav>
 
 	<div class="container main">
-		<input type="search" class="form-control" placeholder="Pokemon name or id">
-
-
-		<my></my>
-		<!-- Name : {{ name | capitalize }}<br/>
-		Id : {{ id }}<br/>
-		Weight: {{ weight }}<br/>
-		Height: {{ height }}<br/>
-		Image: {{ sprite }}<br/>
-		Types: {{ types.join(', ') }}<br/>
-		Abilities: {{ abilities.join(', ') }}<br/>
-		Attacks: {{ attacks.join(', ')}}<br/> 
-		Stats: {{ stats.join(', ') }}<br/>
-		Description: {{ description }}<br>
-		Evolution: {{ evolutions }} -->
+		<form @submit="handleForm">
+			<input type="search" class="form-control" v-model.trim="pokeId" placeholder="Pokemon name or id">
+		</form>
 
 		<router-view></router-view>
 	</div>
