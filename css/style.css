@@ -1,7 +1,21 @@
-.main{text-align: center;}
-table{text-align: left;}
-td{vertical-align: middle !important;}
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+*{
+	font-family: 'Open Sans', serif;
+}
+form{margin-bottom: 10px;}
+.loading{
+	margin-top: 20px;
+	text-align: center;
+}
 footer a:hover{color: black !important;}
+#pokeInfo img{
+	float: left;
+	border: 1px solid #ecf0f1;
+}
+#pokeInfo span{
+	color: #e74c3c;
+	font-weight: bold;
+}
 
 @media (max-height: 700px){
 	footer{display: none !important;}
