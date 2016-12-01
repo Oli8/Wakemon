@@ -52,7 +52,7 @@ var pokemonView  = Vue.extend({
                 pokeInfo.attacks = b.moves.map(v => v.move.name).join(', ');
 
                 pokeInfo.stats = b.stats.map(function(v){
-                    return {key: v.stat.name, value: v.base_stat}
+                    return {key: v.stat.name, value: v.base_stat};
                 });
 
                 this.$http.get('http://pokeapi.co/api/v2/pokemon-species/'+pokeInfo.id+'/').then(function(response){
